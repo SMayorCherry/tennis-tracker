@@ -1917,7 +1917,10 @@
                     <div class="summary-title" style="color: #2E8B57;">📈 ${currentMatch.playerName} - Statistics</div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #667eea; font-size: 13px;">🎾 Serve</h4>
+                    <div class="stat-row"><span>First Serve In</span><span>${currentMatch.playerStats.firstServeIn}</span></div>
+                    <div class="stat-row"><span>First Serve Faults</span><span>${currentMatch.playerStats.firstServeFaults}</span></div>
                     <div class="stat-row"><span>First Serve %</span><span><strong>${pServeStats.firstServePct}%</strong></span></div>
+                    <div class="stat-row"><span>Second Serve In</span><span>${currentMatch.playerStats.secondServeIn}</span></div>
                     <div class="stat-row"><span>Second Serve %</span><span><strong>${pServeStats.secondServePct}%</strong></span></div>
                     <div class="stat-row"><span>Aces</span><span>${currentMatch.playerStats.aces}</span></div>
                     <div class="stat-row"><span>Double Faults</span><span>${currentMatch.playerStats.doubleFaults}</span></div>
@@ -1931,13 +1934,18 @@
                     <div class="stat-row"><span>Return Errors</span><span>${currentMatch.playerStats.returnErrors || 0}</span></div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #2E8B57; font-size: 13px;">🏆 Winners: ${getTotalWinners(currentMatch.playerStats)}</h4>
-                    <div class="stat-row"><span>Baseline</span><span>${currentMatch.playerStats.baselineWinners}</span></div>
-                    <div class="stat-row"><span>Volley</span><span>${currentMatch.playerStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Aces</span><span>${currentMatch.playerStats.aces}</span></div>
+                    <div class="stat-row"><span>Return Winners</span><span>${currentMatch.playerStats.returnWinners || 0}</span></div>
+                    <div class="stat-row"><span>Baseline Winners</span><span>${currentMatch.playerStats.baselineWinners}</span></div>
+                    <div class="stat-row"><span>Volley Winners</span><span>${currentMatch.playerStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Drop Shots</span><span>${currentMatch.playerStats.dropShots}</span></div>
+                    <div class="stat-row"><span>Lobs</span><span>${currentMatch.playerStats.lobs}</span></div>
                     <div class="stat-row"><span>Rally Winners</span><span>${currentMatch.playerStats.rallyWinners || 0}</span></div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors: ${getTotalErrors(currentMatch.playerStats)}</h4>
-                    <div class="stat-row"><span>Unforced</span><span>${currentMatch.playerStats.unforcedErrors}</span></div>
-                    <div class="stat-row"><span>Forced</span><span>${currentMatch.playerStats.forcedErrors}</span></div>
+                    <div class="stat-row"><span>Double Faults</span><span>${currentMatch.playerStats.doubleFaults}</span></div>
+                    <div class="stat-row"><span>Unforced Errors</span><span>${currentMatch.playerStats.unforcedErrors}</span></div>
+                    <div class="stat-row"><span>Forced Errors</span><span>${currentMatch.playerStats.forcedErrors}</span></div>
                     <div class="stat-row"><span>Return Errors</span><span>${currentMatch.playerStats.returnErrors || 0}</span></div>
                 </div>
 
@@ -1945,7 +1953,10 @@
                     <div class="summary-title" style="color: #FF6B6B;">📈 ${currentMatch.opponentName} - Statistics</div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #667eea; font-size: 13px;">🎾 Serve</h4>
+                    <div class="stat-row"><span>First Serve In</span><span>${currentMatch.opponentStats.firstServeIn}</span></div>
+                    <div class="stat-row"><span>First Serve Faults</span><span>${currentMatch.opponentStats.firstServeFaults}</span></div>
                     <div class="stat-row"><span>First Serve %</span><span><strong>${oServeStats.firstServePct}%</strong></span></div>
+                    <div class="stat-row"><span>Second Serve In</span><span>${currentMatch.opponentStats.secondServeIn}</span></div>
                     <div class="stat-row"><span>Second Serve %</span><span><strong>${oServeStats.secondServePct}%</strong></span></div>
                     <div class="stat-row"><span>Aces</span><span>${currentMatch.opponentStats.aces}</span></div>
                     <div class="stat-row"><span>Double Faults</span><span>${currentMatch.opponentStats.doubleFaults}</span></div>
@@ -1959,13 +1970,18 @@
                     <div class="stat-row"><span>Return Errors</span><span>${currentMatch.opponentStats.returnErrors || 0}</span></div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #2E8B57; font-size: 13px;">🏆 Winners: ${getTotalWinners(currentMatch.opponentStats)}</h4>
-                    <div class="stat-row"><span>Baseline</span><span>${currentMatch.opponentStats.baselineWinners}</span></div>
-                    <div class="stat-row"><span>Volley</span><span>${currentMatch.opponentStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Aces</span><span>${currentMatch.opponentStats.aces}</span></div>
+                    <div class="stat-row"><span>Return Winners</span><span>${currentMatch.opponentStats.returnWinners || 0}</span></div>
+                    <div class="stat-row"><span>Baseline Winners</span><span>${currentMatch.opponentStats.baselineWinners}</span></div>
+                    <div class="stat-row"><span>Volley Winners</span><span>${currentMatch.opponentStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Drop Shots</span><span>${currentMatch.opponentStats.dropShots}</span></div>
+                    <div class="stat-row"><span>Lobs</span><span>${currentMatch.opponentStats.lobs}</span></div>
                     <div class="stat-row"><span>Rally Winners</span><span>${currentMatch.opponentStats.rallyWinners || 0}</span></div>
                     
                     <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors: ${getTotalErrors(currentMatch.opponentStats)}</h4>
-                    <div class="stat-row"><span>Unforced</span><span>${currentMatch.opponentStats.unforcedErrors}</span></div>
-                    <div class="stat-row"><span>Forced</span><span>${currentMatch.opponentStats.forcedErrors}</span></div>
+                    <div class="stat-row"><span>Double Faults</span><span>${currentMatch.opponentStats.doubleFaults}</span></div>
+                    <div class="stat-row"><span>Unforced Errors</span><span>${currentMatch.opponentStats.unforcedErrors}</span></div>
+                    <div class="stat-row"><span>Forced Errors</span><span>${currentMatch.opponentStats.forcedErrors}</span></div>
                     <div class="stat-row"><span>Return Errors</span><span>${currentMatch.opponentStats.returnErrors || 0}</span></div>
                 </div>
 
