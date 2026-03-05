@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Performance Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2E8B57">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tennis Tracker">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #2E8B57;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: #236B47;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.danger {
+            background: #FF6B6B;
+        }
+
+        .score-board {
+            background: white;
+            border: 2px solid #2E8B57;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .score-row:last-child {
+            border-bottom: none;
+        }
+
+        .player-name {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .score-numbers {
+            display: flex;
+            gap: 20px;
+        }
+
+        .score-number {
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .score-labels {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .score-label {
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .point-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .point-buttons button {
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-button {
+            padding: 15px;
+            border: 2px solid;
+            border-radius: 8px;
+            background: #f9f9f9;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-title {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .player-selector {
+            background: white;
+            border: 2px solid #2E8B57;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .player-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-tab {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .player-tab.active {
+            background: #2E8B57;
+            color: white;
+            border-color: #2E8B57;
+        }
+
+        .finish-match-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .finish-match-section h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .summary-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .match-complete {
+            background: #2ED573;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .match-item {
+            position: relative;
+        }
+
+        .delete-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-button:hover {
+            background: #c82333;
+        }
+
+        .tournament-info {
+            font-size: 12px;
+            color: #007bff;
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .score-numbers {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <div class="header">
+                <h1>Tennis Performance Tracker</h1>
+                <p>Track your game, improve your performance</p>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div class="form-group">
+                    <label>Tournament Name (Optional)</label>
+                    <input type="text" id="tournament-name" placeholder="e.g., Club Championship, Local League">
+                </div>
+                
+                <div class="form-group">
+                    <label>Match Date</label>
+                    <input type="date" id="match-date">
+                </div>
+                
+                <div class="form-group">
+                    <label>Match Format</label>
+                    <select id="match-format" onchange="updateFormatOptions()">
+                        <option value="3">Best of 3 Sets</option>
+                        <option value="5">Best of 5 Sets</option>
+                        <option value="games">Best of Games (No Sets)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="games-per-set-group">
+                    <label>Games Per Set</label>
+                    <select id="games-per-set">
+                        <option value="6">First to 6 Games (Standard)</option>
+                        <option value="4">First to 4 Games (Short Sets)</option>
+                        <option value="8">First to 8 Games (Pro Sets)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="total-games-group" style="display: none;">
+                    <label>Total Games to Win</label>
+                    <input type="number" id="total-games" min="1" max="50" value="6" placeholder="Enter number of games (e.g., 6, 8, 10)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="player-name" placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Opponent Name</label>
+                    <input type="text" id="opponent-name" placeholder="Enter opponent's name">
+                </div>
+                
+                <button onclick="startMatch()">Start Match</button>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 10px 0;">
+                    <h3 style="margin: 0;">Recent Matches</h3>
+                    <button onclick="showScreen('history-screen')" style="background: #6c757d; padding: 8px 12px; font-size: 14px; width: auto;">View All</button>
+                </div>
+                <div id="match-history">
+                    <p style="text-align: center; color: #666; padding: 20px;">No matches played yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match Screen -->
+        <div id="match-screen" class="screen">
+            <button class="back-button" onclick="showScreen('home-screen')">← Home</button>
+            
+            <div class="header">
+                <h1 id="match-title">Live Match</h1>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div class="score-board">
+                    <div class="score-row">
+                        <div class="player-name" id="player-name-score"></div>
+                        <div class="score-numbers">
+                            <div class="score-number" id="player-sets">0</div>
+                            <div class="score-number" id="player-games">0</div>
+                            <div class="score-number" id="player-points">0</div>
+                        </div>
+                    </div>
+                    <div class="score-row">
+                        <div class="player-name" id="opponent-name-score"></div>
+                        <div class="score-numbers">
+                            <div class="score-number" id="opponent-sets">0</div>
+                            <div class="score-number" id="opponent-games">0</div>
+                            <div class="score-number" id="opponent-points">0</div>
+                        </div>
+                    </div>
+                    <div class="score-labels">
+                        <div class="score-label">Sets</div>
+                        <div class="score-label">Games</div>
+                        <div class="score-label">Points</div>
+                    </div>
+                </div>
+
+                <div class="point-buttons">
+                    <button onclick="addPoint('player')" id="player-point-btn">+1 Player</button>
+                    <button class="danger" onclick="addPoint('opponent')" id="opponent-point-btn">+1 Opponent</button>
+                </div>
+
+                <div class="player-selector">
+                    <h3 style="margin: 0 0 15px 0;">Track Performance For:</h3>
+                    <div class="player-tabs">
+                        <div class="player-tab active" id="track-player-tab" onclick="selectPlayerToTrack('player')">
+                            <span id="track-player-name">Player</span>
+                        </div>
+                        <div class="player-tab" id="track-opponent-tab" onclick="selectPlayerToTrack('opponent')">
+                            <span id="track-opponent-name">Opponent</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; font-size: 14px; color: #666;">
+                        Tap stat buttons below to record for <strong id="current-tracking-player">Player</strong>
+                    </p>
+                </div>
+
+                <h3 style="margin-bottom: 15px;">Performance Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-button" onclick="updateStat('firstServeFaults')" style="border-color: #FF6B6B;">
+                        <div class="stat-value" style="color: #FF6B6B;" id="firstServeFaults">0</div>
+                        <div class="stat-title">First Serve Faults</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('doubleFaults')" style="border-color: #FF4757;">
+                        <div class="stat-value" style="color: #FF4757;" id="doubleFaults">0</div>
+                        <div class="stat-title">Double Faults</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('aces')" style="border-color: #2ED573;">
+                        <div class="stat-value" style="color: #2ED573;" id="aces">0</div>
+                        <div class="stat-title">Aces</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('baselineWinners')" style="border-color: #1E90FF;">
+                        <div class="stat-value" style="color: #1E90FF;" id="baselineWinners">0</div>
+                        <div class="stat-title">Baseline Winners</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('volleyWinners')" style="border-color: #FF9F43;">
+                        <div class="stat-value" style="color: #FF9F43;" id="volleyWinners">0</div>
+                        <div class="stat-title">Volley Winners</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('dropShots')" style="border-color: #A55EEA;">
+                        <div class="stat-value" style="color: #A55EEA;" id="dropShots">0</div>
+                        <div class="stat-title">Drop Shots</div>
+                    </div>
+                    <div class="stat-button" onclick="updateStat('lobs')" style="border-color: #26C6DA;">
+                        <div class="stat-value" style="color: #26C6DA;" id="lobs">0</div>
+                        <div class="stat-title">Lobs</div>
+                    </div>
+                </div>
+
+                <div class="finish-match-section">
+                    <h4>Match Controls</h4>
+                    <div class="finish-match-section">
+                    <h4>Match Control</h4>
+                    <p style="margin: 0 0 10px 0; font-size: 14px; color: #856404;" id="match-info">
+                        You can finish the match at any time or let it complete automatically.
+                    </p>
+                    <button class="secondary" onclick="finishMatch()">Finish Match Now</button>
+                </div>
+                    <button onclick="showSummary()" style="background: #17a2b8; margin-left: 10px;">View Current Stats</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Screen -->
+        <div id="summary-screen" class="screen">
+            <button class="back-button" onclick="showScreen('home-screen')">← Home</button>
+            
+            <div class="header">
+                <h1>Match Summary</h1>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div id="match-result"></div>
+                <div id="summary-content"></div>
+                <button onclick="goBackHome()">Back to Home</button>
+                <button onclick="startNewMatch()">Start New Match</button>
+            </div>
+        </div>
+
+        <!-- Match History Screen -->
+        <div id="history-screen" class="screen">
+            <button class="back-button" onclick="showScreen('home-screen')">← Home</button>
+            
+            <div class="header">
+                <h1>Match History</h1>
+                <p>All your tennis matches</p>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">All Matches</h3>
+                    <button onclick="clearAllHistory()" style="background: #dc3545; padding: 8px 12px; font-size: 14px; width: auto;">Clear All</button>
+                </div>
+                <div id="full-match-history">
+                    <p style="text-align: center; color: #666; padding: 20px;">No matches found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentMatch = {
+            playerName: '',
+            opponentName: '',
+            playerSets: 0,
+            opponentSets: 0,
+            playerGames: 0,
+            opponentGames: 0,
+            playerPoints: 0,
+            opponentPoints: 0,
+            playerStats: {
+                firstServeFaults: 0,
+                doubleFaults: 0,
+                aces: 0,
+                baselineWinners: 0,
+                volleyWinners: 0,
+                dropShots: 0,
+                lobs: 0
+            },
+            opponentStats: {
+                firstServeFaults: 0,
+                doubleFaults: 0,
+                aces: 0,
+                baselineWinners: 0,
+                volleyWinners: 0,
+                dropShots: 0,
+                lobs: 0
+            },
+            trackingPlayer: 'player', // 'player' or 'opponent'
+            startTime: null,
+            endTime: null,
+            completed: false
+        };
+
+        const pointsDisplay = ['0', '15', '30', '40'];
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startMatch() {
+            const playerName = document.getElementById('player-name').value.trim();
+            const opponentName = document.getElementById('opponent-name').value.trim();
+            const tournamentName = document.getElementById('tournament-name').value.trim();
+            const matchDate = document.getElementById('match-date').value;
+            const matchFormatValue = document.getElementById('match-format').value;
+            const isGamesOnly = matchFormatValue === 'games';
+            const matchFormat = isGamesOnly ? 'games' : parseInt(matchFormatValue);
+            const gamesPerSet = isGamesOnly ? 0 : parseInt(document.getElementById('games-per-set').value);
+            const totalGames = isGamesOnly ? parseInt(document.getElementById('total-games').value) : 0;
+            
+            if (!playerName || !opponentName) {
+                alert('Please enter both player names');
+                return;
+            }
+            
+            if (isGamesOnly && (isNaN(totalGames) || totalGames < 1 || totalGames > 50)) {
+                alert('Please enter a valid number of games (1-50)');
+                return;
+            }
+
+            currentMatch = {
+                playerName,
+                opponentName,
+                tournamentName: tournamentName || 'Friendly Match',
+                matchDate: matchDate || new Date().toISOString().split('T')[0],
+                matchFormat: matchFormat, // Best of X sets or 'games'
+                gamesPerSet: gamesPerSet, // Games needed to win a set (0 for games-only)
+                totalGames: totalGames, // Total games to win (games-only format)
+                isGamesOnly: isGamesOnly, // Flag for games-only format
+                setsToWin: isGamesOnly ? 0 : Math.ceil(matchFormat / 2), // Sets needed to win match
+                playerSets: 0,
+                opponentSets: 0,
+                playerGames: 0,
+                opponentGames: 0,
+                playerPoints: 0,
+                opponentPoints: 0,
+                setHistory: [], // Track score of each completed set
+                playerStats: {
+                    firstServeFaults: 0,
+                    doubleFaults: 0,
+                    aces: 0,
+                    baselineWinners: 0,
+                    volleyWinners: 0,
+                    dropShots: 0,
+                    lobs: 0
+                },
+                opponentStats: {
+                    firstServeFaults: 0,
+                    doubleFaults: 0,
+                    aces: 0,
+                    baselineWinners: 0,
+                    volleyWinners: 0,
+                    dropShots: 0,
+                    lobs: 0
+                },
+                trackingPlayer: 'player',
+                startTime: new Date(),
+                completed: false
+            };
+
+            document.getElementById('match-title').textContent = `${playerName} vs ${opponentName}`;
+            document.getElementById('player-name-score').textContent = playerName;
+            document.getElementById('opponent-name-score').textContent = opponentName;
+            document.getElementById('player-point-btn').textContent = `+1 ${playerName}`;
+            document.getElementById('opponent-point-btn').textContent = `+1 ${opponentName}`;
+            
+            // Update player selector
+            document.getElementById('track-player-name').textContent = playerName;
+            document.getElementById('track-opponent-name').textContent = opponentName;
+            document.getElementById('current-tracking-player').textContent = playerName;
+            
+            // Show match format info
+            document.getElementById('match-title').textContent = `${playerName} vs ${opponentName}`;
+            
+            // Update match info text
+            if (isGamesOnly) {
+                document.getElementById('match-info').textContent = 
+                    `Playing first to ${totalGames} games (no sets). You can finish anytime.`;
+            } else {
+                const setsNeeded = Math.ceil(matchFormat / 2);
+                document.getElementById('match-info').textContent = 
+                    `Playing best of ${matchFormat} sets (need ${setsNeeded} to win). Each set: first to ${gamesPerSet} games. You can finish anytime.`;
+            }
+            
+            // Update score display based on format
+            updateScoreDisplay();
+            updateDisplay();
+            showScreen('match-screen');
+        }
+
+        function startNewMatch() {
+            // Clear the current match data
+            document.getElementById('player-name').value = '';
+            document.getElementById('opponent-name').value = '';
+            document.getElementById('tournament-name').value = '';
+            document.getElementById('match-date').value = '';
+            document.getElementById('match-format').value = '3';
+            document.getElementById('games-per-set').value = '6';
+            document.getElementById('total-games').value = 6;
+            updateFormatOptions();
+            showScreen('home-screen');
+            // Refresh the match history to show updated status
+            loadMatchHistory();
+        }
+
+        function getPointsDisplay(points) {
+            if (points < 4) return pointsDisplay[points];
+            return 'AD';
+        }
+
+        function updateDisplay() {
+            document.getElementById('player-sets').textContent = currentMatch.playerSets;
+            document.getElementById('opponent-sets').textContent = currentMatch.opponentSets;
+            document.getElementById('player-games').textContent = currentMatch.playerGames;
+            document.getElementById('opponent-games').textContent = currentMatch.opponentGames;
+            document.getElementById('player-points').textContent = getPointsDisplay(currentMatch.playerPoints);
+            document.getElementById('opponent-points').textContent = getPointsDisplay(currentMatch.opponentPoints);
+
+            // Update stats display based on tracking player
+            const currentStats = currentMatch.trackingPlayer === 'player' ? 
+                currentMatch.playerStats : currentMatch.opponentStats;
+                
+            Object.keys(currentStats).forEach(stat => {
+                const element = document.getElementById(stat);
+                if (element) {
+                    element.textContent = currentStats[stat];
+                }
+            });
+        }
+
+        function updateScoreDisplay() {
+            const setsElements = document.querySelectorAll('#player-sets, #opponent-sets');
+            const setsLabel = document.getElementById('sets-label');
+            
+            if (currentMatch.isGamesOnly) {
+                // Hide sets column for games-only format
+                setsElements.forEach(el => el.style.display = 'none');
+                if (setsLabel) setsLabel.style.display = 'none';
+            } else {
+                // Show sets column for set-based format
+                setsElements.forEach(el => el.style.display = 'block');
+                if (setsLabel) setsLabel.style.display = 'block';
+            }
+        }
+
+        function selectPlayerToTrack(player) {
+            currentMatch.trackingPlayer = player;
+            
+            // Update UI
+            document.getElementById('track-player-tab').classList.toggle('active', player === 'player');
+            document.getElementById('track-opponent-tab').classList.toggle('active', player === 'opponent');
+            
+            const playerName = player === 'player' ? currentMatch.playerName : currentMatch.opponentName;
+            document.getElementById('current-tracking-player').textContent = playerName;
+            
+            updateDisplay();
+        }
+
+        function addPoint(player) {
+            if (currentMatch.completed) return;
+
+            if (player === 'player') {
+                currentMatch.playerPoints++;
+            } else {
+                currentMatch.opponentPoints++;
+            }
+
+            checkGameWin();
+            updateDisplay();
+        }
+
+        function checkGameWin() {
+            const pPoints = currentMatch.playerPoints;
+            const oPoints = currentMatch.opponentPoints;
+
+            if ((pPoints >= 4 || oPoints >= 4) && Math.abs(pPoints - oPoints) >= 2) {
+                if (pPoints > oPoints) {
+                    currentMatch.playerGames++;
+                } else {
+                    currentMatch.opponentGames++;
+                }
+
+                currentMatch.playerPoints = 0;
+                currentMatch.opponentPoints = 0;
+                
+                checkSetWin();
+            }
+        }
+
+        function checkSetWin() {
+            const pGames = currentMatch.playerGames;
+            const oGames = currentMatch.opponentGames;
+
+            const gamesNeeded = currentMatch.gamesPerSet || 6;
+            const marginNeeded = gamesNeeded === 6 ? 2 : 1; // Standard sets need 2-game margin, short sets need 1
+            
+            // Check if someone has won the set
+            let setWon = false;
+            
+            if (gamesNeeded === 6) {
+                // Standard tennis scoring: first to 6 games with 2-game margin, or 7-6
+                setWon = (pGames >= 6 || oGames >= 6) && Math.abs(pGames - oGames) >= 2;
+            } else {
+                // Short sets or pro sets: first to X games with margin
+                setWon = (pGames >= gamesNeeded || oGames >= gamesNeeded) && Math.abs(pGames - oGames) >= marginNeeded;
+            }
+            
+            if (setWon) {
+                // Record the set score before resetting
+                currentMatch.setHistory.push({
+                    playerGames: pGames,
+                    opponentGames: oGames,
+                    setNumber: currentMatch.setHistory.length + 1
+                });
+                
+                if (pGames > oGames) {
+                    currentMatch.playerSets++;
+                } else {
+                    currentMatch.opponentSets++;
+                }
+                
+                // Reset games
+                currentMatch.playerGames = 0;
+                currentMatch.opponentGames = 0;
+                
+                // Check match win
+                const setsNeeded = currentMatch.setsToWin || 2;
+                
+                if (currentMatch.playerSets >= setsNeeded || currentMatch.opponentSets >= setsNeeded) {
+                    currentMatch.completed = true;
+                    currentMatch.endTime = new Date();
+                    
+                    const winner = currentMatch.playerSets > currentMatch.opponentSets ? 
+                        currentMatch.playerName : currentMatch.opponentName;
+                    
+                    setTimeout(() => {
+                        alert(`Match Complete! ${winner} wins the match!`);
+                        finishMatch();
+                    }, 500);
+                }
+            }
+        }
+
+        function checkGamesOnlyWin() {
+            const gamesNeeded = currentMatch.totalGames;
+            const pGames = currentMatch.playerGames;
+            const oGames = currentMatch.opponentGames;
+            
+            // Games-only format: first to reach target games with 2-game margin
+            if ((pGames >= gamesNeeded || oGames >= gamesNeeded) && Math.abs(pGames - oGames) >= 2) {
+                currentMatch.completed = true;
+                currentMatch.endTime = new Date();
+                
+                const winner = pGames > oGames ? 
+                    currentMatch.playerName : currentMatch.opponentName;
+                
+                setTimeout(() => {
+                    alert(`Match Complete! ${winner} wins ${Math.max(pGames, oGames)} - ${Math.min(pGames, oGames)}!`);
+                    finishMatch();
+                }, 500);
+            }
+        }
+
+        function updateStat(statName) {
+            if (currentMatch.trackingPlayer === 'player') {
+                currentMatch.playerStats[statName]++;
+            } else {
+                currentMatch.opponentStats[statName]++;
+            }
+            updateDisplay();
+        }
+
+        function finishMatch() {
+            currentMatch.endTime = currentMatch.endTime || new Date();
+            currentMatch.completed = true; // Mark match as completed
+            saveMatch();
+            showSummary();
+        }
+
+        function saveMatch() {
+            const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
+            
+            // Determine winner
+            let winner = '';
+            if (currentMatch.completed) {
+                if (currentMatch.isGamesOnly) {
+                    winner = currentMatch.playerGames > currentMatch.opponentGames ? 
+                        currentMatch.playerName : currentMatch.opponentName;
+                } else {
+                    winner = currentMatch.playerSets > currentMatch.opponentSets ? 
+                        currentMatch.playerName : currentMatch.opponentName;
+                }
+            }
+            
+            matches.unshift({
+                ...currentMatch,
+                id: Date.now(),
+                winner: winner
+            });
+            localStorage.setItem('tennisMatches', JSON.stringify(matches));
+            loadMatchHistory();
+        }
+
+        function showSummary() {
+            const duration = currentMatch.endTime ? 
+                Math.floor((currentMatch.endTime - currentMatch.startTime) / (1000 * 60)) : 0;
+            
+            // Determine winner based on match format
+            let winner = '';
+            let finalScore = '';
+            
+            if (currentMatch.isGamesOnly) {
+                winner = currentMatch.playerGames > currentMatch.opponentGames ? 
+                    currentMatch.playerName : currentMatch.opponentName;
+                finalScore = `${currentMatch.playerGames} - ${currentMatch.opponentGames} games`;
+            } else {
+                winner = currentMatch.playerSets > currentMatch.opponentSets ? 
+                    currentMatch.playerName : currentMatch.opponentName;
+                finalScore = `${currentMatch.playerSets} - ${currentMatch.opponentSets} sets`;
+            }
+
+            const resultHtml = currentMatch.completed ? 
+                `<div class="match-complete">
+                    <h2>Match Complete!</h2>
+                    <p>Winner: ${winner}</p>
+                    <p>Final Score: ${finalScore}</p>
+                    <p>Duration: ${duration} minutes</p>
+                </div>` : 
+                `<div class="summary-card">
+                    <div class="summary-title">Match in Progress</div>
+                    <p>Current Score: ${currentMatch.isGamesOnly ? 
+                        `${currentMatch.playerGames} - ${currentMatch.opponentGames} games` :
+                        `${currentMatch.playerSets} - ${currentMatch.opponentSets} sets`
+                    }</p>
+                </div>`;
+
+            const summaryHtml = `
+                ${resultHtml}
+                ${getScoreBreakdown()}
+                <div class="summary-card">
+                    <div class="summary-title">${currentMatch.playerName} - Performance Statistics</div>
+                    <h4 style="margin: 10px 0; color: #2E8B57;">Serving Performance</h4>
+                    <div class="stat-row"><span>Aces</span><span>${currentMatch.playerStats.aces}</span></div>
+                    <div class="stat-row"><span>First Serve Faults</span><span>${currentMatch.playerStats.firstServeFaults}</span></div>
+                    <div class="stat-row"><span>Double Faults</span><span>${currentMatch.playerStats.doubleFaults}</span></div>
+                    <h4 style="margin: 10px 0; color: #2E8B57;">Winning Shots</h4>
+                    <div class="stat-row"><span>Baseline Winners</span><span>${currentMatch.playerStats.baselineWinners}</span></div>
+                    <div class="stat-row"><span>Volley Winners</span><span>${currentMatch.playerStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Drop Shots</span><span>${currentMatch.playerStats.dropShots}</span></div>
+                    <div class="stat-row"><span>Lobs</span><span>${currentMatch.playerStats.lobs}</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">${currentMatch.opponentName} - Performance Statistics</div>
+                    <h4 style="margin: 10px 0; color: #FF6B6B;">Serving Performance</h4>
+                    <div class="stat-row"><span>Aces</span><span>${currentMatch.opponentStats.aces}</span></div>
+                    <div class="stat-row"><span>First Serve Faults</span><span>${currentMatch.opponentStats.firstServeFaults}</span></div>
+                    <div class="stat-row"><span>Double Faults</span><span>${currentMatch.opponentStats.doubleFaults}</span></div>
+                    <h4 style="margin: 10px 0; color: #FF6B6B;">Winning Shots</h4>
+                    <div class="stat-row"><span>Baseline Winners</span><span>${currentMatch.opponentStats.baselineWinners}</span></div>
+                    <div class="stat-row"><span>Volley Winners</span><span>${currentMatch.opponentStats.volleyWinners}</span></div>
+                    <div class="stat-row"><span>Drop Shots</span><span>${currentMatch.opponentStats.dropShots}</span></div>
+                    <div class="stat-row"><span>Lobs</span><span>${currentMatch.opponentStats.lobs}</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Performance Comparison & Insights</div>
+                    <p style="margin: 10px 0;">${getInsights()}</p>
+                </div>
+            `;
+
+            document.getElementById('summary-content').innerHTML = summaryHtml;
+            showScreen('summary-screen');
+        }
+
+        function getInsights() {
+            const pStats = currentMatch.playerStats;
+            const oStats = currentMatch.opponentStats;
+            let insights = [];
+
+            // Serving comparison
+            if (pStats.aces > oStats.aces) {
+                insights.push(`${currentMatch.playerName} had superior serving with ${pStats.aces} aces vs ${oStats.aces}.`);
+            } else if (oStats.aces > pStats.aces) {
+                insights.push(`${currentMatch.opponentName} dominated serving with ${oStats.aces} aces vs ${pStats.aces}.`);
+            }
+
+            // Error comparison
+            if (pStats.doubleFaults < oStats.doubleFaults) {
+                insights.push(`${currentMatch.playerName} showed better serving consistency with fewer double faults.`);
+            } else if (oStats.doubleFaults < pStats.doubleFaults) {
+                insights.push(`${currentMatch.opponentName} showed better serving consistency with fewer double faults.`);
+            }
+
+            // Shot style comparison
+            const pNetPlay = pStats.volleyWinners;
+            const pBaseline = pStats.baselineWinners;
+            const oNetPlay = oStats.volleyWinners;
+            const oBaseline = oStats.baselineWinners;
+
+            if (pNetPlay > pBaseline && oBaseline > oNetPlay) {
+                insights.push(`${currentMatch.playerName} preferred net play while ${currentMatch.opponentName} dominated from the baseline.`);
+            } else if (pBaseline > pNetPlay && oNetPlay > oBaseline) {
+                insights.push(`${currentMatch.playerName} controlled from the baseline while ${currentMatch.opponentName} excelled at the net.`);
+            }
+
+            // Shot variety
+            const pVariety = pStats.dropShots + pStats.lobs;
+            const oVariety = oStats.dropShots + oStats.lobs;
+            if (pVariety > oVariety) {
+                insights.push(`${currentMatch.playerName} showed more tactical shot variety.`);
+            } else if (oVariety > pVariety) {
+                insights.push(`${currentMatch.opponentName} displayed superior shot variety.`);
+            }
+
+            return insights.join(' ') || "Match analysis will improve with more statistical data.";
+        }
+
+        function loadMatchHistory() {
+            const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
+            const historyDiv = document.getElementById('match-history');
+            
+            if (matches.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No matches played yet</p>';
+                return;
+            }
+
+            // Show only last 5 matches on home screen
+            const recentMatches = matches.slice(0, 5);
+            const historyHtml = recentMatches.map(match => `
+                <div class="summary-card match-item" onclick="viewMatch(${match.id})" style="cursor: pointer;">
+                    <button class="delete-button" onclick="deleteMatch(event, ${match.id})" title="Delete match">×</button>
+                    <div style="font-weight: bold;">${match.playerName} vs ${match.opponentName}</div>
+                    ${match.tournamentName && match.tournamentName !== 'Friendly Match' ? 
+                        `<div class="tournament-info">${match.tournamentName}</div>` : ''
+                    }
+                    <div style="color: #666; font-size: 14px;">
+                        ${match.matchDate ? new Date(match.matchDate).toLocaleDateString() : new Date(match.startTime).toLocaleDateString()}
+                    </div>
+                    ${match.matchFormat ? 
+                        `<div style="color: #666; font-size: 12px;">
+                            ${match.isGamesOnly ? 
+                                `First to ${match.totalGames} games (no sets)` : 
+                                `Best of ${match.matchFormat} sets, ${match.gamesPerSet} games per set`
+                            }
+                        </div>` : ''
+                    }
+                    ${match.completed ? 
+                        `<div style="color: #2E8B57; font-weight: 500;">
+                            Status: Completed<br>
+                            Winner: ${match.winner || 'Unknown'}<br>
+                            ${match.isGamesOnly ? 
+                                `Games: ${match.playerGames} - ${match.opponentGames}` : 
+                                `Sets: ${match.playerSets} - ${match.opponentSets}`
+                            }
+                        </div>` : 
+                        '<div style="color: #FF9F43;">Status: In Progress</div>'
+                    }
+                </div>
+            `).join('');
+
+            historyDiv.innerHTML = historyHtml;
+            
+            // Also update full history if on history screen
+            loadFullMatchHistory();
+        }
+
+        function loadFullMatchHistory() {
+            const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
+            const historyDiv = document.getElementById('full-match-history');
+            
+            if (!historyDiv) return; // Element doesn't exist yet
+            
+            if (matches.length === 0) {
+                historyDiv.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No matches found</p>';
+                return;
+            }
+
+            const historyHtml = matches.map(match => `
+                <div class="summary-card match-item" onclick="viewMatch(${match.id})" style="cursor: pointer;">
+                    <button class="delete-button" onclick="deleteMatch(event, ${match.id})" title="Delete match">×</button>
+                    <div style="font-weight: bold;">${match.playerName} vs ${match.opponentName}</div>
+                    ${match.tournamentName && match.tournamentName !== 'Friendly Match' ? 
+                        `<div class="tournament-info">${match.tournamentName}</div>` : ''
+                    }
+                    <div style="color: #666; font-size: 14px;">
+                        ${match.matchDate ? new Date(match.matchDate).toLocaleDateString() : new Date(match.startTime).toLocaleDateString()}
+                    </div>
+                    ${match.completed ? 
+                        `<div style="color: #2E8B57; font-weight: 500;">
+                            Status: Completed<br>
+                            Sets: ${match.playerSets} - ${match.opponentSets}
+                        </div>` : 
+                        '<div style="color: #FF9F43;">Status: In Progress</div>'
+                    }
+                </div>
+            `).join('');
+
+            historyDiv.innerHTML = historyHtml;
+        }
+
+        function viewMatch(matchId) {
+            const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
+            const match = matches.find(m => m.id === matchId);
+            if (match) {
+                currentMatch = match;
+                showSummary();
+            }
+        }
+
+        function goBackHome() {
+            showScreen('home-screen');
+            // Refresh match history to show updated status
+            loadMatchHistory();
+        }
+
+        function deleteMatch(event, matchId) {
+            event.stopPropagation(); // Prevent triggering viewMatch
+            
+            if (confirm('Are you sure you want to delete this match? This action cannot be undone.')) {
+                const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
+                const updatedMatches = matches.filter(match => match.id !== matchId);
+                localStorage.setItem('tennisMatches', JSON.stringify(updatedMatches));
+                loadMatchHistory();
+            }
+        }
+
+        function clearAllHistory() {
+            if (confirm('Are you sure you want to delete ALL match history? This action cannot be undone.')) {
+                localStorage.removeItem('tennisMatches');
+                loadMatchHistory();
+            }
+        }
+
+        function updateFormatOptions() {
+            const matchFormat = document.getElementById('match-format').value;
+            const gamesPerSetGroup = document.getElementById('games-per-set-group');
+            const totalGamesGroup = document.getElementById('total-games-group');
+            
+            if (matchFormat === 'games') {
+                // Show games-only options
+                gamesPerSetGroup.style.display = 'none';
+                totalGamesGroup.style.display = 'block';
+            } else {
+                // Show set-based options
+                gamesPerSetGroup.style.display = 'block';
+                totalGamesGroup.style.display = 'none';
+            }
+        }
+
+        function getScoreBreakdown() {
+            if (currentMatch.isGamesOnly) {
+                return `
+                    <div class="summary-card">
+                        <div class="summary-title">Final Score</div>
+                        <div style="text-align: center; font-size: 18px; margin: 15px 0;">
+                            <strong>${currentMatch.playerName}: ${currentMatch.playerGames} games</strong><br>
+                            <strong>${currentMatch.opponentName}: ${currentMatch.opponentGames} games</strong>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let setBreakdown = '';
+                if (currentMatch.setHistory && currentMatch.setHistory.length > 0) {
+                    setBreakdown = currentMatch.setHistory.map(set => 
+                        `<div class="stat-row">
+                            <span>Set ${set.setNumber}</span>
+                            <span>${set.playerGames} - ${set.opponentGames}</span>
+                        </div>`
+                    ).join('');
+                    
+                    // Add current set if match ended mid-set
+                    if (currentMatch.playerGames > 0 || currentMatch.opponentGames > 0) {
+                        const currentSetNum = currentMatch.setHistory.length + 1;
+                        setBreakdown += `<div class="stat-row">
+                            <span>Set ${currentSetNum} (incomplete)</span>
+                            <span>${currentMatch.playerGames} - ${currentMatch.opponentGames}</span>
+                        </div>`;
+                    }
+                }
+                
+                return `
+                    <div class="summary-card">
+                        <div class="summary-title">Set-by-Set Breakdown</div>
+                        ${setBreakdown || '<p style="text-align: center; color: #666;">No sets completed</p>'}
+                        <div style="border-top: 2px solid #2E8B57; margin-top: 15px; padding-top: 15px;">
+                            <div class="stat-row" style="font-weight: bold; font-size: 16px;">
+                                <span>Final Score</span>
+                                <span>${currentMatch.playerSets} - ${currentMatch.opponentSets}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Initialize
+        document.getElementById('match-date').value = new Date().toISOString().split('T')[0];
+        updateFormatOptions();
+        loadMatchHistory();
+    </script>
+</body>
+</html>
