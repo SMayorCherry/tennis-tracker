@@ -18,6 +18,10 @@ Tennis Performance Tracker/
 │   │   └── tennis-tracker.html  ← After high-priority features
 │   ├── v1.2.0/
 │   │   └── tennis-tracker.html  ← Game-by-game tracking
+│   ├── v1.3.0/
+│   │   └── tennis-tracker.html  ← Serve points won & rally tracking
+│   ├── v1.4.0/
+│   │   └── tennis-tracker.html  ← Return stats & export all
 │   └── ...
 ```
 
@@ -239,6 +243,116 @@ Tennis Performance Tracker/
 
 ---
 
+### v1.3.0 - Serve Points Won & Rally Tracking
+**Date:** March 5, 2026  
+**Status:** ✅ Completed  
+**File Location:** `versions/v1.3.0/tennis-tracker.html`
+
+#### New Features
+
+##### 1. Points Won on First Serve
+- **Track first serve efficiency**: Record points won when first serve goes in
+- **Percentage calculation**: Auto-calculates 1st Serve Points Won % (Points Won / First Serves In)
+- **Comparison chart**: Head-to-head comparison in match summary
+- **Insights**: AI analysis of first serve dominance
+
+##### 2. Points Won on Second Serve
+- **Track second serve efficiency**: Record points won on second serve
+- **Percentage calculation**: Auto-calculates 2nd Serve Points Won % (Points Won / Second Serves In)
+- **Comparison chart**: Side-by-side comparison with opponent
+- **Insights**: Analysis of second serve effectiveness
+
+##### 3. Rally Winners
+- **Track rally points**: Record points won through extended rallies
+- **Not just serve winners**: Captures baseline battle victories
+- **Pie chart inclusion**: Rally winners shown in winners distribution
+- **Comparison**: Head-to-head rally winner comparison
+
+##### 4. Enhanced Summary Statistics
+- **New "Serve Points Won" section**: Dedicated section in player statistics
+- **Updated comparison chart**: Now includes 1st/2nd Srv Pts Won % and Rally Winners
+- **Enhanced insights**: AI analysis includes serve point and rally statistics
+
+#### Technical Changes
+- Added `pointsWonFirstServe` and `pointsWonSecondServe` to playerStats/opponentStats
+- Added `rallyWinners` to playerStats/opponentStats
+- New `getServePointStats()` function for percentage calculations
+- Updated `getTotalWinners()` to include rally winners
+- Updated `getInsights()` with serve point and rally analysis
+- Backward compatibility for viewing older matches
+
+#### Data Structure Changes
+```javascript
+// New fields added to playerStats/opponentStats:
+{
+    pointsWonFirstServe: 0,   // Points won when 1st serve in
+    pointsWonSecondServe: 0,  // Points won on 2nd serve
+    rallyWinners: 0           // Points won through rallies
+}
+```
+
+#### Migration Notes
+- Existing match data is backward compatible
+- Old matches will show 0 for new statistics
+- New matches will have full serve point tracking
+- Charts updated to display new metrics
+
+---
+
+### v1.4.0 - Return of Serve Stats & Export All Matches
+**Date:** March 5, 2026  
+**Status:** ✅ Completed  
+**File Location:** `versions/v1.4.0/tennis-tracker.html`
+
+#### New Features
+
+##### 1. Return of Serve Winners
+- **New stat button**: Track winners hit on return of serve
+- **Summary inclusion**: Shows in winners distribution pie chart
+- **Comparison chart**: Head-to-head return winner comparison
+- **Use case**: Measure aggressive returning effectiveness
+
+##### 2. Return of Serve Errors
+- **New stat button**: Track errors made when returning serve
+- **Error totals**: Included in total error calculations
+- **Summary display**: Shown in detailed error breakdown
+- **Use case**: Identify return game weaknesses
+
+##### 3. Export All Matches PDF
+- **New button**: "Export All" on Match History screen
+- **Comprehensive report**: Generates PDF with ALL match data
+- **Overall statistics**: Shows total wins, losses, win rate
+- **Individual match details**: Each match with full stats table
+- **Print-ready format**: Optimized for printing/saving as PDF
+
+##### 4. Enhanced Error Tracking
+- **Total Errors display**: Now shows total error count in summary
+- **Return errors included**: All error types aggregated
+- **Better analysis**: Complete error picture for performance review
+
+#### Technical Changes
+- Added `returnWinners` and `returnErrors` to playerStats/opponentStats
+- Updated `getTotalWinners()` to include return winners
+- Updated `getTotalErrors()` to include return errors
+- New `exportAllMatchesPDF()` function for bulk export
+- Backward compatibility for viewing older matches
+
+#### Data Structure Changes
+```javascript
+// New fields added to playerStats/opponentStats:
+{
+    returnWinners: 0,   // Winners hit on return of serve
+    returnErrors: 0     // Errors made when returning serve
+}
+```
+
+#### Migration Notes
+- Existing match data is backward compatible
+- Old matches will show 0 for return stats
+- Export All feature works with all historical matches
+
+---
+
 ## Quick Reference
 
 | Version | Date | Key Changes | Status | Revert Command |
@@ -246,27 +360,35 @@ Tennis Performance Tracker/
 | v1.0.0 | Mar 5, 2026 | Initial release | ✅ Stable | Copy from `versions/v1.0.0/` |
 | v1.1.0 | Mar 5, 2026 | Undo/Redo, Enhanced Stats, Charts, PDF Export | ✅ Stable | Copy from `versions/v1.1.0/` |
 | v1.2.0 | Mar 5, 2026 | Game-by-Game, Point-by-Point, Break Points, Server Tracking | ✅ Stable | Copy from `versions/v1.2.0/` |
+| v1.3.0 | Mar 5, 2026 | Serve Points Won, Rally Winners, Enhanced Analytics | ✅ Stable | Copy from `versions/v1.3.0/` |
+| v1.4.0 | Mar 5, 2026 | Return Stats, Export All Matches PDF | ✅ Stable | Copy from `versions/v1.4.0/` |
 
 ## Feature Comparison
 
-| Feature | v1.0.0 | v1.1.0 | v1.2.0 |
-|---------|--------|--------|--------|
-| Basic Scoring | ✅ | ✅ | ✅ |
-| Match History | ✅ | ✅ | ✅ |
-| Undo/Redo | ❌ | ✅ | ✅ |
-| Unforced Errors | ❌ | ✅ | ✅ |
-| First Serve % | ❌ | ✅ | ✅ |
-| Second Serve % | ❌ | ✅ | ✅ |
-| Visual Charts | ❌ | ✅ | ✅ |
-| PDF Export | ❌ | ✅ | ✅ |
-| Share Results | ❌ | ✅ | ✅ |
-| Live Serve Stats | ❌ | ✅ | ✅ |
-| Server Tracking | ❌ | ❌ | ✅ |
-| Game-by-Game History | ❌ | ❌ | ✅ |
-| Point-by-Point Log | ❌ | ❌ | ✅ |
-| Break Point Stats | ❌ | ❌ | ✅ |
-| Visual Game Timeline | ❌ | ❌ | ✅ |
-| Per-Set Statistics | ❌ | ❌ | ✅ |
+| Feature | v1.0.0 | v1.1.0 | v1.2.0 | v1.3.0 | v1.4.0 |
+|---------|--------|--------|--------|--------|--------|
+| Basic Scoring | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Match History | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Undo/Redo | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Unforced Errors | ❌ | ✅ | ✅ | ✅ | ✅ |
+| First Serve % | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Second Serve % | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Visual Charts | ❌ | ✅ | ✅ | ✅ | ✅ |
+| PDF Export (Single) | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Share Results | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Live Serve Stats | ❌ | ✅ | ✅ | ✅ | ✅ |
+| Server Tracking | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Game-by-Game History | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Point-by-Point Log | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Break Point Stats | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Visual Game Timeline | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Per-Set Statistics | ❌ | ❌ | ✅ | ✅ | ✅ |
+| 1st Serve Points Won | ❌ | ❌ | ❌ | ✅ | ✅ |
+| 2nd Serve Points Won | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Rally Winners | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Return Winners | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Return Errors | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Export All Matches PDF | ❌ | ❌ | ❌ | ❌ | ✅ |
 
 ---
 

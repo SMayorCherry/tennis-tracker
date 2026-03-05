@@ -852,18 +852,6 @@
                     </div>
                 </div>
 
-                <div class="stats-section-title">🎯 Return of Serve</div>
-                <div class="stats-grid">
-                    <div class="stat-button" onclick="updateStat('returnWinners')" style="border-color: #20c997;">
-                        <div class="stat-value" style="color: #20c997;" id="returnWinners">0</div>
-                        <div class="stat-title">Return Winners</div>
-                    </div>
-                    <div class="stat-button" onclick="updateStat('returnErrors')" style="border-color: #e74c3c;">
-                        <div class="stat-value" style="color: #e74c3c;" id="returnErrors">0</div>
-                        <div class="stat-title">Return Errors</div>
-                    </div>
-                </div>
-
                 <div class="stats-section-title">🏆 Winners & Shots</div>
                 <div class="stats-grid">
                     <div class="stat-button" onclick="updateStat('baselineWinners')" style="border-color: #1E90FF;">
@@ -945,10 +933,7 @@
             <div style="padding: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="margin: 0;">All Matches</h3>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="exportAllMatchesPDF()" style="background: #17a2b8; padding: 8px 12px; font-size: 14px; width: auto;">📄 Export All</button>
-                        <button onclick="clearAllHistory()" style="background: #dc3545; padding: 8px 12px; font-size: 14px; width: auto;">Clear All</button>
-                    </div>
+                    <button onclick="clearAllHistory()" style="background: #dc3545; padding: 8px 12px; font-size: 14px; width: auto;">Clear All</button>
                 </div>
                 <div id="full-match-history">
                     <p style="text-align: center; color: #666; padding: 20px;">No matches found</p>
@@ -959,7 +944,7 @@
 
     <script>
         // Version info
-        const APP_VERSION = '1.4.0';
+        const APP_VERSION = '1.3.0';
         
         // Game state
         let currentMatch = {
@@ -996,8 +981,6 @@
                 aces: 0,
                 pointsWonFirstServe: 0,
                 pointsWonSecondServe: 0,
-                returnWinners: 0,
-                returnErrors: 0,
                 baselineWinners: 0,
                 volleyWinners: 0,
                 dropShots: 0,
@@ -1014,8 +997,6 @@
                 aces: 0,
                 pointsWonFirstServe: 0,
                 pointsWonSecondServe: 0,
-                returnWinners: 0,
-                returnErrors: 0,
                 baselineWinners: 0,
                 volleyWinners: 0,
                 dropShots: 0,
@@ -1207,8 +1188,6 @@
                     aces: 0,
                     pointsWonFirstServe: 0,
                     pointsWonSecondServe: 0,
-                    returnWinners: 0,
-                    returnErrors: 0,
                     baselineWinners: 0,
                     volleyWinners: 0,
                     dropShots: 0,
@@ -1225,8 +1204,6 @@
                     aces: 0,
                     pointsWonFirstServe: 0,
                     pointsWonSecondServe: 0,
-                    returnWinners: 0,
-                    returnErrors: 0,
                     baselineWinners: 0,
                     volleyWinners: 0,
                     dropShots: 0,
@@ -1631,7 +1608,7 @@
         }
 
         function getTotalWinners(stats) {
-            return stats.aces + stats.baselineWinners + stats.volleyWinners + stats.dropShots + stats.lobs + (stats.rallyWinners || 0) + (stats.returnWinners || 0);
+            return stats.aces + stats.baselineWinners + stats.volleyWinners + stats.dropShots + stats.lobs + (stats.rallyWinners || 0);
         }
 
         function getServePointStats(stats) {
@@ -1653,7 +1630,7 @@
         }
 
         function getTotalErrors(stats) {
-            return stats.doubleFaults + stats.unforcedErrors + stats.forcedErrors + (stats.returnErrors || 0);
+            return stats.doubleFaults + stats.unforcedErrors + stats.forcedErrors;
         }
 
         function generateBarChart(data, maxValue) {
@@ -1803,8 +1780,6 @@
                 { label: '1st Serve %', playerValue: pServeStats.firstServePct, opponentValue: oServeStats.firstServePct },
                 { label: '1st Srv Pts Won', playerValue: pServePointStats.firstServePtsWonPct, opponentValue: oServePointStats.firstServePtsWonPct },
                 { label: '2nd Srv Pts Won', playerValue: pServePointStats.secondServePtsWonPct, opponentValue: oServePointStats.secondServePtsWonPct },
-                { label: 'Return Winners', playerValue: currentMatch.playerStats.returnWinners || 0, opponentValue: currentMatch.opponentStats.returnWinners || 0 },
-                { label: 'Return Errors', playerValue: currentMatch.playerStats.returnErrors || 0, opponentValue: currentMatch.opponentStats.returnErrors || 0 },
                 { label: 'Winners', playerValue: getTotalWinners(currentMatch.playerStats), opponentValue: getTotalWinners(currentMatch.opponentStats) },
                 { label: 'Rally Winners', playerValue: currentMatch.playerStats.rallyWinners || 0, opponentValue: currentMatch.opponentStats.rallyWinners || 0 },
                 { label: 'Unf. Errors', playerValue: currentMatch.playerStats.unforcedErrors, opponentValue: currentMatch.opponentStats.unforcedErrors },
@@ -1816,7 +1791,6 @@
             // Pie chart data
             const playerWinnersData = [
                 { label: 'Aces', value: currentMatch.playerStats.aces, color: '#2ED573' },
-                { label: 'Return', value: currentMatch.playerStats.returnWinners || 0, color: '#20c997' },
                 { label: 'Baseline', value: currentMatch.playerStats.baselineWinners, color: '#1E90FF' },
                 { label: 'Volley', value: currentMatch.playerStats.volleyWinners, color: '#FF9F43' },
                 { label: 'Drop Shots', value: currentMatch.playerStats.dropShots, color: '#A55EEA' },
@@ -1926,19 +1900,14 @@
                     <div class="stat-row"><span>1st Serve Points Won</span><span><strong>${pServePointStats.pointsWonFirst}</strong> (${pServePointStats.firstServePtsWonPct}%)</span></div>
                     <div class="stat-row"><span>2nd Serve Points Won</span><span><strong>${pServePointStats.pointsWonSecond}</strong> (${pServePointStats.secondServePtsWonPct}%)</span></div>
                     
-                    <h4 style="margin: 15px 0 10px 0; color: #20c997; font-size: 13px;">🎯 Return of Serve</h4>
-                    <div class="stat-row"><span>Return Winners</span><span>${currentMatch.playerStats.returnWinners || 0}</span></div>
-                    <div class="stat-row"><span>Return Errors</span><span>${currentMatch.playerStats.returnErrors || 0}</span></div>
-                    
                     <h4 style="margin: 15px 0 10px 0; color: #2E8B57; font-size: 13px;">🏆 Winners: ${getTotalWinners(currentMatch.playerStats)}</h4>
                     <div class="stat-row"><span>Baseline</span><span>${currentMatch.playerStats.baselineWinners}</span></div>
                     <div class="stat-row"><span>Volley</span><span>${currentMatch.playerStats.volleyWinners}</span></div>
                     <div class="stat-row"><span>Rally Winners</span><span>${currentMatch.playerStats.rallyWinners || 0}</span></div>
                     
-                    <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors: ${getTotalErrors(currentMatch.playerStats)}</h4>
+                    <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors</h4>
                     <div class="stat-row"><span>Unforced</span><span>${currentMatch.playerStats.unforcedErrors}</span></div>
                     <div class="stat-row"><span>Forced</span><span>${currentMatch.playerStats.forcedErrors}</span></div>
-                    <div class="stat-row"><span>Return Errors</span><span>${currentMatch.playerStats.returnErrors || 0}</span></div>
                 </div>
 
                 <div class="summary-card">
@@ -1954,19 +1923,14 @@
                     <div class="stat-row"><span>1st Serve Points Won</span><span><strong>${oServePointStats.pointsWonFirst}</strong> (${oServePointStats.firstServePtsWonPct}%)</span></div>
                     <div class="stat-row"><span>2nd Serve Points Won</span><span><strong>${oServePointStats.pointsWonSecond}</strong> (${oServePointStats.secondServePtsWonPct}%)</span></div>
                     
-                    <h4 style="margin: 15px 0 10px 0; color: #20c997; font-size: 13px;">🎯 Return of Serve</h4>
-                    <div class="stat-row"><span>Return Winners</span><span>${currentMatch.opponentStats.returnWinners || 0}</span></div>
-                    <div class="stat-row"><span>Return Errors</span><span>${currentMatch.opponentStats.returnErrors || 0}</span></div>
-                    
                     <h4 style="margin: 15px 0 10px 0; color: #2E8B57; font-size: 13px;">🏆 Winners: ${getTotalWinners(currentMatch.opponentStats)}</h4>
                     <div class="stat-row"><span>Baseline</span><span>${currentMatch.opponentStats.baselineWinners}</span></div>
                     <div class="stat-row"><span>Volley</span><span>${currentMatch.opponentStats.volleyWinners}</span></div>
                     <div class="stat-row"><span>Rally Winners</span><span>${currentMatch.opponentStats.rallyWinners || 0}</span></div>
                     
-                    <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors: ${getTotalErrors(currentMatch.opponentStats)}</h4>
+                    <h4 style="margin: 15px 0 10px 0; color: #dc3545; font-size: 13px;">❌ Errors</h4>
                     <div class="stat-row"><span>Unforced</span><span>${currentMatch.opponentStats.unforcedErrors}</span></div>
                     <div class="stat-row"><span>Forced</span><span>${currentMatch.opponentStats.forcedErrors}</span></div>
-                    <div class="stat-row"><span>Return Errors</span><span>${currentMatch.opponentStats.returnErrors || 0}</span></div>
                 </div>
 
                 <!-- AI Insights -->
@@ -2144,11 +2108,6 @@
                 if (!match.opponentStats.pointsWonFirstServe) match.opponentStats.pointsWonFirstServe = 0;
                 if (!match.opponentStats.pointsWonSecondServe) match.opponentStats.pointsWonSecondServe = 0;
                 if (!match.opponentStats.rallyWinners) match.opponentStats.rallyWinners = 0;
-                // v1.4.0 backward compatibility
-                if (!match.playerStats.returnWinners) match.playerStats.returnWinners = 0;
-                if (!match.playerStats.returnErrors) match.playerStats.returnErrors = 0;
-                if (!match.opponentStats.returnWinners) match.opponentStats.returnWinners = 0;
-                if (!match.opponentStats.returnErrors) match.opponentStats.returnErrors = 0;
                 
                 currentMatch = match;
                 showSummary();
@@ -2284,148 +2243,6 @@
             } else {
                 navigator.clipboard.writeText(shareText).then(() => alert('Copied to clipboard!'));
             }
-        }
-
-        function exportAllMatchesPDF() {
-            const matches = JSON.parse(localStorage.getItem('tennisMatches') || '[]');
-            
-            if (matches.length === 0) {
-                alert('No matches to export!');
-                return;
-            }
-
-            const printWindow = window.open('', '_blank');
-            
-            // Generate match summaries
-            const matchesHtml = matches.map((match, index) => {
-                // Apply backward compatibility
-                if (!match.playerStats) match.playerStats = {};
-                if (!match.opponentStats) match.opponentStats = {};
-                
-                const pStats = match.playerStats;
-                const oStats = match.opponentStats;
-                
-                const pFirstServes = (pStats.firstServeIn || 0) + (pStats.firstServeFaults || 0);
-                const pFirstServePct = pFirstServes > 0 ? Math.round(((pStats.firstServeIn || 0) / pFirstServes) * 100) : 0;
-                const oFirstServes = (oStats.firstServeIn || 0) + (oStats.firstServeFaults || 0);
-                const oFirstServePct = oFirstServes > 0 ? Math.round(((oStats.firstServeIn || 0) / oFirstServes) * 100) : 0;
-                
-                const pWinners = (pStats.aces || 0) + (pStats.baselineWinners || 0) + (pStats.volleyWinners || 0) + 
-                                 (pStats.dropShots || 0) + (pStats.lobs || 0) + (pStats.rallyWinners || 0) + (pStats.returnWinners || 0);
-                const oWinners = (oStats.aces || 0) + (oStats.baselineWinners || 0) + (oStats.volleyWinners || 0) + 
-                                 (oStats.dropShots || 0) + (oStats.lobs || 0) + (oStats.rallyWinners || 0) + (oStats.returnWinners || 0);
-                
-                const pErrors = (pStats.doubleFaults || 0) + (pStats.unforcedErrors || 0) + (pStats.forcedErrors || 0) + (pStats.returnErrors || 0);
-                const oErrors = (oStats.doubleFaults || 0) + (oStats.unforcedErrors || 0) + (oStats.forcedErrors || 0) + (oStats.returnErrors || 0);
-                
-                const score = match.isGamesOnly ? 
-                    `${match.playerGames} - ${match.opponentGames} games` :
-                    `${match.playerSets} - ${match.opponentSets} sets`;
-                
-                const setScores = match.setHistory ? match.setHistory.map(s => `${s.playerGames}-${s.opponentGames}`).join(', ') : '';
-                
-                return `
-                    <div class="match-card" style="page-break-inside: avoid;">
-                        <div class="match-header">
-                            <span>Match ${index + 1}</span>
-                            <span>${match.matchDate ? new Date(match.matchDate).toLocaleDateString() : 'N/A'}</span>
-                        </div>
-                        <div class="match-body">
-                            <h3 style="margin: 0 0 5px 0;">${match.playerName} vs ${match.opponentName}</h3>
-                            ${match.tournamentName && match.tournamentName !== 'Friendly Match' ? `<p style="color: #007bff; margin: 0 0 10px 0;">${match.tournamentName}</p>` : ''}
-                            <p style="margin: 5px 0;"><strong>Result:</strong> ${match.winner || 'Unknown'} wins - ${score}</p>
-                            ${setScores ? `<p style="margin: 5px 0;"><strong>Sets:</strong> ${setScores}</p>` : ''}
-                            
-                            <table class="stats-table">
-                                <tr>
-                                    <th>Statistic</th>
-                                    <th>${match.playerName}</th>
-                                    <th>${match.opponentName}</th>
-                                </tr>
-                                <tr><td>First Serve %</td><td>${pFirstServePct}%</td><td>${oFirstServePct}%</td></tr>
-                                <tr><td>Aces</td><td>${pStats.aces || 0}</td><td>${oStats.aces || 0}</td></tr>
-                                <tr><td>Double Faults</td><td>${pStats.doubleFaults || 0}</td><td>${oStats.doubleFaults || 0}</td></tr>
-                                <tr><td>Return Winners</td><td>${pStats.returnWinners || 0}</td><td>${oStats.returnWinners || 0}</td></tr>
-                                <tr><td>Return Errors</td><td>${pStats.returnErrors || 0}</td><td>${oStats.returnErrors || 0}</td></tr>
-                                <tr><td>Total Winners</td><td>${pWinners}</td><td>${oWinners}</td></tr>
-                                <tr><td>Total Errors</td><td>${pErrors}</td><td>${oErrors}</td></tr>
-                                <tr><td>Unforced Errors</td><td>${pStats.unforcedErrors || 0}</td><td>${oStats.unforcedErrors || 0}</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Calculate overall statistics
-            let totalMatches = matches.length;
-            let wins = matches.filter(m => m.winner === m.playerName).length;
-            let losses = totalMatches - wins;
-            
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>All Matches Report - Tennis Performance Tracker</title>
-                    <style>
-                        body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; }
-                        h1 { text-align: center; color: #2E8B57; margin-bottom: 5px; }
-                        .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
-                        .summary-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px; text-align: center; }
-                        .summary-stats { display: flex; justify-content: space-around; margin-top: 15px; }
-                        .summary-stat { text-align: center; }
-                        .summary-stat-value { font-size: 28px; font-weight: bold; }
-                        .summary-stat-label { font-size: 12px; opacity: 0.9; }
-                        .match-card { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
-                        .match-header { background: #2E8B57; color: white; padding: 10px 15px; display: flex; justify-content: space-between; }
-                        .match-body { padding: 15px; }
-                        .stats-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-                        .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
-                        .stats-table th { background: #f8f9fa; }
-                        .stats-table tr:nth-child(even) { background: #f9f9f9; }
-                        .footer { text-align: center; font-size: 12px; color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
-                        @media print {
-                            .match-card { page-break-inside: avoid; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>🎾 Tennis Match History</h1>
-                    <p class="subtitle">Complete Match Records & Statistics</p>
-                    
-                    <div class="summary-box">
-                        <h2 style="margin: 0;">Overall Performance</h2>
-                        <div class="summary-stats">
-                            <div class="summary-stat">
-                                <div class="summary-stat-value">${totalMatches}</div>
-                                <div class="summary-stat-label">Total Matches</div>
-                            </div>
-                            <div class="summary-stat">
-                                <div class="summary-stat-value">${wins}</div>
-                                <div class="summary-stat-label">Wins</div>
-                            </div>
-                            <div class="summary-stat">
-                                <div class="summary-stat-value">${losses}</div>
-                                <div class="summary-stat-label">Losses</div>
-                            </div>
-                            <div class="summary-stat">
-                                <div class="summary-stat-value">${totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0}%</div>
-                                <div class="summary-stat-label">Win Rate</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h2>Match Details</h2>
-                    ${matchesHtml}
-                    
-                    <div class="footer">
-                        <p>Generated by Tennis Performance Tracker v${APP_VERSION}</p>
-                        <p>Report Date: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
         }
 
         // PWA Service Worker
